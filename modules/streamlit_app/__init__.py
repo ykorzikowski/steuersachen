@@ -333,6 +333,7 @@ class Steuersachen():
                 **GF Gehalt:** {Steuersachen.format_currency(gf_gehalt)}  
                 **Gezahlte KK Beiträge GF:** {Steuersachen.format_currency(gf_krankenkassenbeitrag)}  
                 **Werbungskostenpauschale:** {Steuersachen.format_currency(werbekostenpauschale)}  
+                **Ehepartner ZvE:** {Steuersachen.format_currency(ehepartner_zve)}
                 **Sonstige Absetzbare Ausgaben:** -{Steuersachen.format_currency(sonstige_absetzbare_ausgaben)}  
                 **ZvE:** {Steuersachen.format_currency(zve)}  
                 **Gezahlte Steuern:** {Steuersachen.format_currency(ekst)}  
@@ -345,7 +346,7 @@ class Steuersachen():
             st.subheader("Zusammenfassung")
 
             st.markdown(f"""
-            **Nettoerlös:** {Steuersachen.format_currency(gesamter_nettoerlös)}  
+            **Nettoerlös (ohne Ehepartner wenn zutreffend):** {Steuersachen.format_currency(gesamter_nettoerlös)}  
             **Abgaben Absolut:** {Steuersachen.format_currency(gesamte_abgaben)}  
             **Abgabenlast in Prozent:** {pretty_print_gesamte_abgaben_prozentual} %  
             """)
