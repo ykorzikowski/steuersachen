@@ -264,6 +264,7 @@ class Steuersachen():
             else:
                 kv_zusatzbeitrag = 0
                 krankentagegeld = False
+                pv_zuschlag = False
 
             # Ehepartner-Einstellungen
             verheiratet = st.checkbox(
@@ -292,7 +293,12 @@ class Steuersachen():
 
             # Persönliche Ebene
             werbekostenpauschale = CONFIG['steuern']['werbungskostenpauschale'][steuerjahr]
-            gf_krankenkassenbeitrag = Steuersachen.calculate_annual_krankenkassenbeitrag_self_employed(gf_gehalt, additional_rate=kv_zusatzbeitrag, year=steuerjahr, krankentagegeld=krankentagegeld, pv_zuschlag=pv_zuschlag)
+
+            if gkv:
+                gf_krankenkassenbeitrag = Steuersachen.calculate_annual_krankenkassenbeitrag_self_employed(gf_gehalt, additional_rate=kv_zusatzbeitrag, year=steuerjahr, krankentagegeld=krankentagegeld, pv_zuschlag=pv_zuschlag)
+            else:
+                gf_krankenkassenbeitrag = 0
+
             zve = gf_gehalt - gf_krankenkassenbeitrag - werbekostenpauschale - sonstige_absetzbare_ausgaben
 
             if verheiratet:
