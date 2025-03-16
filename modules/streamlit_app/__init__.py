@@ -390,4 +390,5 @@ class Steuersachen():
         st.markdown("""
         ---
         📄 [Impressum](https://yannik.swokiz.com/impressum/)
+        📄 [GitHub](https://github.com/ykorzikowski/steuersachen)
         """, unsafe_allow_html=True)
