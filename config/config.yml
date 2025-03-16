@@ -1,0 +1,130 @@
+hint:
+  gwst_hebesatz: "Gewerbesteuer-Hebesatz in Prozent, variiert je nach Gemeinde."
+  steuerjahr: "Das Steuerjahr, für das die Berechnung gilt."
+  gmbh_umsatz: "Gesamter Umsatz der GmbH im Jahr."
+  gmbh_kosten: "Betriebsausgaben der GmbH, die steuerlich absetzbar sind."
+  gf_gehalt: "Geschäftsführergehalt, das von der GmbH an den Geschäftsführer gezahlt wird."
+  sonstige_absetzbare_ausgaben: "Zusätzliche Ausgaben, die steuerlich geltend gemacht werden können."
+  gkv: "Ob der Geschäftsführer gesetzlich versichert ist (True/False). "
+  krankentagegeld: "Die Krankentagegeld-Versicherung ist eine freiwillige Zusatzversicherung für Angestellte, Freiberufler und Selbständige"
+  pv_zuschlag: "Für kinderlose ab 23 Jahren kommt ein Zuschlag dazu."
+  kv_zusatzbeitrag: "Zusätzlicher Krankenkassenbeitragssatz in Prozent."
+  verheiratet: "Ob der Steuerpflichtige verheiratet ist (True/False)."
+  ehepartner_zve: "Zu versteuerndes Einkommen des Ehepartners, falls verheiratet."
+
+steuern:
+  flat_tax:
+    gmbh:
+      kst: 0.15
+      soli: 0.0075  # 0.15 * 0.05
+
+  werbungskostenpauschale:
+    2020: 1000
+    2021: 1000
+    2022: 1200
+    2023: 1230
+    2024: 1230
+    2025: 1230
+
+  krankenversicherung:
+    beitragsbemessungsgrenzen:
+      2020: 56250  # 4.687,50 € monatlich
+      2021: 58050  # 4.837,50 € monatlich
+      2022: 58050  # 4.837,50 € monatlich
+      2023: 59850  # 4.987,50 € monatlich
+      2024: 62300  # 5.191,67 € monatlich
+      2025: 66150  # 5.512,50 € monatlich
+    
+    mindestbemessungsgrundlage:
+      2020: 12819.96  # 12 Monate * 1.068,33 €
+      2021: 13160.04  # 12 Monate * 1.096,67 €
+      2022: 13160.04  # 12 Monate * 1.096,67 €
+      2023: 13779.96  # 12 Monate * 1.148,33 €
+      2024: 14199.96  # 12 Monate * 1.183,33 €
+      2025: 14979.96  # 12 Monate * 1.248,33 €
+
+    rates:
+      general: 0.14  # Allgemeiner KV Beitragssatz
+      pv: 0.036  # Pflegeversicherungssatz
+      pv_zuschlag: 0.006  # Pflegeversicherungszusatz kinderlose
+      krankentagegeld: 0.006  # Beitrag für Krankentagegeld
+
+  einkommensteuer:
+    2020:
+      zone1_start: 9408
+      zone2_start: 14532
+      zone3_start: 57051
+      zone4_start: 270500
+      zone5_start: 999999999
+      y_factor: 972.87
+      y_offset: 1400
+      z_factor: 212.02
+      z_offset: 2397
+      z_extra: 972.79
+      tax_42_offset: 8963.74
+      tax_45_offset: 17078.74
+    2021:
+      zone1_start: 9744
+      zone2_start: 14753
+      zone3_start: 57918
+      zone4_start: 274612
+      zone5_start: 999999999
+      y_factor: 995.21
+      y_offset: 1400
+      z_factor: 208.85
+      z_offset: 2397
+      z_extra: 950.96
+      tax_42_offset: 9136.63
+      tax_45_offset: 17407.13
+    2022:
+      zone1_start: 10347
+      zone2_start: 14926
+      zone3_start: 58596
+      zone4_start: 277825
+      zone5_start: 999999999
+      y_factor: 1088.67
+      y_offset: 1400
+      z_factor: 206.43
+      z_offset: 2397
+      z_extra: 938.24
+      tax_42_offset: 9335.4
+      tax_45_offset: 17766.68
+    2023:
+      zone1_start: 10908
+      zone2_start: 15999
+      zone3_start: 62709
+      zone4_start: 277825
+      zone5_start: 999999999
+      y_factor: 979.18
+      y_offset: 1400
+      z_factor: 192.59
+      z_offset: 2397
+      z_extra: 965.58
+      tax_42_offset: 10603.19
+      tax_45_offset: 18836.45
+    2024:
+      zone1_start: 12096
+      zone2_start: 17443
+      zone3_start: 68480
+      zone4_start: 277825
+      zone5_start: 999999999
+      y_factor: 932.3
+      y_offset: 1400
+      z_factor: 176.64
+      z_offset: 2397
+      z_extra: 1015.13
+      tax_42_offset: 10911.92
+      tax_45_offset: 19246.67
+    2025:
+      zone1_start: 12096
+      zone2_start: 17443
+      zone3_start: 68480
+      zone4_start: 277825
+      zone5_start: 999999999
+      y_factor: 932.3
+      y_offset: 1400
+      z_factor: 176.64
+      z_offset: 2397
+      z_extra: 1015.13
+      tax_42_offset: 10911.92
+      tax_45_offset: 19246.67

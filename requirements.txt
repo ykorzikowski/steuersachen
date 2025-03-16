@@ -1,0 +1,2 @@
+streamlit==1.43.2
+pyaml==23.12.0
