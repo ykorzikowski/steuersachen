@@ -1,3 +1,9 @@
+# Steuersachen
+
+Ein kleiner Rechner zur Berechnung von Einkommenssteuer und Gehaltsoptimierung für geschäftsführende Gesellschafter einer Kapitalgesellschaft. 
+
+Gehostete Version: https://steuersachen.swokiz.com/
+
 ## Run test file
 
 ## Setup Local Dev
