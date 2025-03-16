@@ -303,8 +303,7 @@ class Steuersachen():
             pretty_print_persoenlicher_durchschnitts_steuersatz_prozentual = round(persoenlicher_durchschnitts_steuersatz_prozentual * 100, 2)
 
             persoenliche_abgabenlast = ekst + gf_krankenkassenbeitrag
-            zve += sonstige_absetzbare_ausgaben
-            persoenliches_netto = zve - persoenliche_abgabenlast
+            persoenliches_netto = zve - persoenliche_abgabenlast + sonstige_absetzbare_ausgaben
             persoenliche_abgabenlast_prozentual = persoenliche_abgabenlast / zve
             pretty_print_persoenliche_abgabenlast_prozentual = round(persoenliche_abgabenlast_prozentual * 100, 2)
 
@@ -333,7 +332,7 @@ class Steuersachen():
                 **GF Gehalt:** {Steuersachen.format_currency(gf_gehalt)}  
                 **Gezahlte KK Beiträge GF:** {Steuersachen.format_currency(gf_krankenkassenbeitrag)}  
                 **Werbungskostenpauschale:** {Steuersachen.format_currency(werbekostenpauschale)}  
-                **Ehepartner ZvE:** {Steuersachen.format_currency(ehepartner_zve)}
+                **Ehepartner ZvE:** {Steuersachen.format_currency(ehepartner_zve)}  
                 **Sonstige Absetzbare Ausgaben:** -{Steuersachen.format_currency(sonstige_absetzbare_ausgaben)}  
                 **ZvE:** {Steuersachen.format_currency(zve)}  
                 **Gezahlte Steuern:** {Steuersachen.format_currency(ekst)}  
