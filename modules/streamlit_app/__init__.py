@@ -194,7 +194,7 @@ class Steuersachen():
         # Steuerjahr Auswahl
         steuerjahr = st.slider(
             "Steuerjahr",
-            min_value=2020, max_value=2025, step=1, value=2024,
+            min_value=2020, max_value=2025, step=1, value=2025,
             help=CONFIG["hint"]["steuerjahr"]
         )
 
