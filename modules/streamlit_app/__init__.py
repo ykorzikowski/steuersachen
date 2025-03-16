@@ -157,7 +157,11 @@ class Steuersachen():
         return round(gewerbesteuer, 2)
 
     def main(self):
-        st.set_page_config(layout="wide")
+        st.set_page_config(
+            page_title="Steuersachen Rechner",
+            page_icon="📊",
+            layout="wide"
+        )
         st.header("Optimierung GF Gehalt")
         st.markdown("""
         ### **Beschreibung des Rechners**
