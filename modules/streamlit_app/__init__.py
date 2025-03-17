@@ -358,7 +358,7 @@ class Steuersachen():
 
             if gkv:
                 st.info("""
-                        Für die Berechnung der Krankengassenbeiträge müssen ggf noch andere Einkünfte sowie die Art der Versicherung des Ehepartners und der Höhe der Beiträge dort berücksichtigt werden. 
+                        Für die Berechnung der Krankenkassenbeiträge müssen ggf noch andere Einkünfte sowie die Art der Versicherung des Ehepartners und der Höhe der Beiträge dort berücksichtigt werden. 
                         Dies geschieht hier nicht. Der Beitrag wird zudem hier zur Vereinfachung zu 100% von dem zvE abgezogen, was auch nicht richtig ist. Für genauere Informationen Fragen Sie Ihren Steuerberater. 
                         """)
 
