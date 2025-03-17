@@ -324,7 +324,11 @@ class Steuersachen():
             gesamtes_gf_brutto = gf_gehalt + andere_einkommen
 
             if gkv:
-                gf_krankenkassenbeitrag = Steuersachen.calculate_annual_krankenkassenbeitrag_self_employed(gesamtes_gf_brutto, additional_rate=kv_zusatzbeitrag, year=steuerjahr, krankentagegeld=krankentagegeld, pv_zuschlag=pv_zuschlag)
+                gf_krankenkassenbeitrag = Steuersachen.calculate_annual_krankenkassenbeitrag_self_employed(gesamtes_gf_brutto, 
+                                                                                                           additional_rate=kv_zusatzbeitrag, 
+                                                                                                           year=steuerjahr, 
+                                                                                                           krankentagegeld=krankentagegeld, 
+                                                                                                           pv_zuschlag=pv_zuschlag)
             else:
                 gf_krankenkassenbeitrag = beitrag_pkv*12
 
@@ -343,7 +347,7 @@ class Steuersachen():
             pretty_print_persoenlicher_durchschnitts_steuersatz_prozentual = round(persoenlicher_durchschnitts_steuersatz_prozentual * 100, 2)
 
             persoenliche_abgabenlast = ekst + gf_krankenkassenbeitrag
-            persoenliches_netto = gesamtes_gf_brutto - persoenliche_abgabenlast + sonstige_absetzbare_ausgaben
+            persoenliches_netto = gesamtes_gf_brutto - persoenliche_abgabenlast
             persoenliche_abgabenlast_prozentual = persoenliche_abgabenlast / zve
             pretty_print_persoenliche_abgabenlast_prozentual = round(persoenliche_abgabenlast_prozentual * 100, 2)
 
