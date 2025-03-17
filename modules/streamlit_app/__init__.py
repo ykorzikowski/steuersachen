@@ -343,7 +343,7 @@ class Steuersachen():
             pretty_print_persoenlicher_durchschnitts_steuersatz_prozentual = round(persoenlicher_durchschnitts_steuersatz_prozentual * 100, 2)
 
             persoenliche_abgabenlast = ekst + gf_krankenkassenbeitrag
-            persoenliches_netto = zve - persoenliche_abgabenlast + sonstige_absetzbare_ausgaben
+            persoenliches_netto = gesamtes_gf_brutto - persoenliche_abgabenlast + sonstige_absetzbare_ausgaben
             persoenliche_abgabenlast_prozentual = persoenliche_abgabenlast / zve
             pretty_print_persoenliche_abgabenlast_prozentual = round(persoenliche_abgabenlast_prozentual * 100, 2)
 
@@ -374,18 +374,27 @@ class Steuersachen():
                 st.divider()
                 st.markdown(f"""
                 GF Gehalt: **{Steuersachen.format_currency(gf_gehalt)}**  
-                Gezahlte KV Beiträge GF: :red[**-{Steuersachen.format_currency(gf_krankenkassenbeitrag)}**]  
+                Andere Einkommen: **{Steuersachen.format_currency(andere_einkommen)}**  
+                Absetzbare KV Beiträge GF: :red[**-{Steuersachen.format_currency(kv_steuerlich_absetzbar)}**]  
                 Werbungskostenpauschale: :red[**-{Steuersachen.format_currency(werbekostenpauschale)}**]  
                 Ehepartner ZvE: **+{Steuersachen.format_currency(ehepartner_zve)}**  
                 Sonstige Absetzbare Ausgaben: :red[**-{Steuersachen.format_currency(sonstige_absetzbare_ausgaben)}**]  
                 ZvE: **{Steuersachen.format_currency(zve)}**  
+                """)
+                
+                st.markdown(f"""
                 Abzug EkSt+Soli: :red[**-{Steuersachen.format_currency(ekst)}**]  
-                Abzug Ehepartner ZvE: **-{Steuersachen.format_currency(ehepartner_zve)}**  
-                Abgaben Absolut: :red[**{Steuersachen.format_currency(persoenliche_abgabenlast)}**]  
+                Gezahlte KV Beiträge GF: :red[**-{Steuersachen.format_currency(gf_krankenkassenbeitrag)}**]  
+                Abgaben Gesamt: :red[**{Steuersachen.format_currency(persoenliche_abgabenlast)}**]  
+                """)
+
+                st.markdown(f"""
+                GF Netto: :green[**{Steuersachen.format_currency(persoenliches_netto)}**]  
                 Zusammengefasste Abgabenlast in Prozent (inkl. KV): **{pretty_print_persoenliche_abgabenlast_prozentual} %**  
                 Persönlicher Steuersatz (Durchschnitt): **{pretty_print_persoenlicher_durchschnitts_steuersatz_prozentual} %**  
                 Persönlicher Grenzsteuersatz: **{pretty_print_zve_grenzsteuersatz} %**  
                 """)
+
 
             st.subheader("Zusammenfassung")
 
