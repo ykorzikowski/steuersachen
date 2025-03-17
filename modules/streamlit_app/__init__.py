@@ -399,7 +399,6 @@ class Steuersachen():
                 Persönlicher Grenzsteuersatz: **{pretty_print_zve_grenzsteuersatz} %**  
                 """)
 
-
             st.subheader("Zusammenfassung")
 
             st.markdown(f"""
@@ -407,6 +406,18 @@ class Steuersachen():
             Abgaben Absolut: **{Steuersachen.format_currency(gesamte_abgaben)}**  
             Abgabenlast in Prozent: **{pretty_print_gesamte_abgaben_prozentual} %**  
             """)
+
+            bt_col1, bt_col2 = st.columns(2)
+            if 'store_result' not in st.session_state:
+                st.session_state['store_result'] = "0 €"
+
+            with bt_col2:
+                if st.button("Vergleichswert Wert speichern"):
+                    st.session_state['store_result'] = Steuersachen.format_currency(gesamter_nettoerlös)
+            with bt_col1:
+                st.markdown(f"""
+                Vergleichswert Nettoerlös: **:green[{st.session_state['store_result']}]**  
+                """)
 
         # Dynamischer Fließtext zur Erklärung der Steuerberechnungen
         summary_text = f"""
