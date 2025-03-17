@@ -429,7 +429,7 @@ class Steuersachen():
         (**{Steuersachen.format_currency(gmbh_steuern_gesamt)}** für Körperschaftsteuer, Solidaritätszuschlag und Gewerbesteuer) bleibt ein **Gewinn nach Steuern von {Steuersachen.format_currency(gmbh_gewinn_nach_steuern)}** übrig.
 
         Für den Geschäftsführer ergibt sich ein zu versteuerndes Einkommen von **{Steuersachen.format_currency(zve)}**, 
-        wobei **{Steuersachen.format_currency(gf_krankenkassenbeitrag)}** an Krankenkassenbeiträgen, eine Werbekostenpauschale von **{Steuersachen.format_currency(werbekostenpauschale)}** und **{Steuersachen.format_currency(sonstige_absetzbare_ausgaben)}** als sonstige absetzbare Ausgaben berücksichtigt wurden.
+        wobei **{Steuersachen.format_currency(kv_steuerlich_absetzbar)}** an Krankenkassenbeiträgen, eine Werbekostenpauschale von **{Steuersachen.format_currency(werbekostenpauschale)}** und **{Steuersachen.format_currency(sonstige_absetzbare_ausgaben)}** als sonstige absetzbare Ausgaben berücksichtigt wurden.
 
         Der persönliche Einkommensteuersatz liegt bei **{pretty_print_persoenlicher_durchschnitts_steuersatz_prozentual} %**, 
         während der Grenzsteuersatz **{pretty_print_zve_grenzsteuersatz} %** beträgt. Insgesamt fallen persönliche Abgaben in Höhe von **{Steuersachen.format_currency(persoenliche_abgabenlast)}** an, 
