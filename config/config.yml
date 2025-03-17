@@ -11,6 +11,9 @@ hint:
   kv_zusatzbeitrag: "Zusätzlicher Krankenkassenbeitragssatz in Prozent."
   verheiratet: "Ob der Steuerpflichtige verheiratet ist (True/False)."
   ehepartner_zve: "Zu versteuerndes Einkommen des Ehepartners, falls verheiratet."
+  andere_einkommen: "Andere Einkommen, die hinzugerechnet werden."
+  beitrag_pkv: "Beitrag zur PKV."
+  pkv_steuerlich_absetzbar: "Zu wie viel % ist der PKV Beitrag absetzbar?"
 
 steuern:
   flat_tax:

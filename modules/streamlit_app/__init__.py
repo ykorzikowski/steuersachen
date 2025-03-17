@@ -165,14 +165,14 @@ class Steuersachen():
         st.header("Optimierung GF Gehalt")
         st.markdown("""
         ### **Beschreibung des Rechners**
-        Dieser Rechner hilft dabei, das optimale Geschäftsführergehalt zu bestimmen, um Steuer- und Sozialabgabenlasten zu minimieren. 
+        Dieser Rechner hilft dabei, das optimale Geschäftsführergehalt zu bestimmen, um Steuer- und gg.f Krankenkassenbeiträge zu minimieren. 
         Das Gehalt beeinflusst sowohl die private Steuerbelastung als auch die Unternehmenssteuern der GmbH. Ziel ist es, möglichst viel Geld anzusparen
         und z.B. in breit gestreute ETF zu investieren. 
 
         **Wichtige Einflussfaktoren:**
         - **Körperschaftsteuer (KSt)** und **Gewerbesteuer (GwSt)**: Das Gehalt reduziert den steuerpflichtigen Gewinn der GmbH.
         - **Einkommensteuer (ESt)**: Das Geschäftsführergehalt unterliegt dem progressiven Einkommensteuertarif.
-        - **Sozialversicherungsbeiträge**: Bei gesetzlicher Versicherung fallen Krankenkassen- und Rentenversicherungsbeiträge an.
+        - **Krankenkassenbeiträge**: Bei gesetzlicher Versicherung steigt der Beitrag mit dem Einkommen.
 
         ### **Optimierungsmöglichkeiten**
         1. **Steuerliche Balance finden:**  
@@ -183,7 +183,7 @@ class Steuersachen():
         Falls verheiratet, kann eine geschickte Verteilung des Einkommens eine niedrigere Steuerprogression bewirken.
 
         3. **Krankenkassenwahl berücksichtigen:**  
-        - Bei gesetzlicher Krankenversicherung steigt der Beitrag mit dem Gehalt.
+        - Bei gesetzlicher Krankenversicherung steigt der Beitrag mit dem Einkommen.
         - Eine private Krankenversicherung kann ab einem bestimmten Einkommen vorteilhafter sein.
 
         4. **Ausschüttung vs. Gehalt:**  
@@ -235,6 +235,12 @@ class Steuersachen():
         with col2:
             st.subheader("Persönliche Ebene")
 
+            andere_einkommen = st.slider(
+                "Einkommen aus Vermietung, Verpachtung, andere Selbstständige Arbeit (€)",
+                min_value=0, max_value=500000, step=100, value=0,
+                help=CONFIG["hint"]["andere_einkommen"]
+            )
+
             sonstige_absetzbare_ausgaben = st.slider(
                 "Sonstige absetzbare Ausgaben (€)",
                 min_value=0, max_value=50000, step=100, value=5000,
@@ -245,6 +251,8 @@ class Steuersachen():
                 "Gesetzliche Krankenversicherung (GKV)", value=True,
                 help=CONFIG["hint"]["gkv"]
             )
+
+            kv_steuerlich_absetzbar = 100
 
             if gkv:
                 kv_zusatzbeitrag = st.slider(
@@ -260,11 +268,20 @@ class Steuersachen():
                     "Pflegeversicherung Zuschlag", value=True,
                     help=CONFIG["hint"]["pv_zuschlag"]
                 )
-
             else:
                 kv_zusatzbeitrag = 0
                 krankentagegeld = False
                 pv_zuschlag = False
+                beitrag_pkv = st.slider(
+                    "Beitrag zur PKV (€)",
+                    min_value=0, max_value=2000, step=10, value=1000,
+                    help=CONFIG["hint"]["beitrag_pkv"]
+                )
+                kv_steuerlich_absetzbar = st.slider(
+                    "PKV Beitrg absetzbar (%)",
+                    min_value=10, max_value=100, step=5, value=100,
+                    help=CONFIG["hint"]["pkv_steuerlich_absetzbar"]
+                )
 
             # Ehepartner-Einstellungen
             verheiratet = st.checkbox(
@@ -283,9 +300,19 @@ class Steuersachen():
 
             # GmbH Ebene
             gmbh_gewinn_vor_steuern = gmbh_umsatz - gmbh_kosten - gf_gehalt
-            gwst = Steuersachen.berechne_gewerbesteuer(gmbh_gewinn_vor_steuern, gwst_hebesatz, freibetrag=0)
-            soli = gmbh_gewinn_vor_steuern * CONFIG['steuern']['flat_tax']['gmbh']['soli']
-            kst = gmbh_gewinn_vor_steuern * CONFIG['steuern']['flat_tax']['gmbh']['kst']
+            gwst = 0
+            soli = 0
+            kst = 0
+
+            if gmbh_gewinn_vor_steuern <= 0:
+                st.error("**Fehler:** Das Unternehmen darf keinen Verlust machen!")
+                return
+
+            if gmbh_gewinn_vor_steuern > 0:
+                gwst = Steuersachen.berechne_gewerbesteuer(gmbh_gewinn_vor_steuern, gwst_hebesatz, freibetrag=0)
+                soli = gmbh_gewinn_vor_steuern * CONFIG['steuern']['flat_tax']['gmbh']['soli']
+                kst = gmbh_gewinn_vor_steuern * CONFIG['steuern']['flat_tax']['gmbh']['kst']
+
             gmbh_steuern_gesamt = gwst + soli + kst
             gmbh_gewinn_nach_steuern = gmbh_gewinn_vor_steuern - gmbh_steuern_gesamt
             gmbh_abgabenlast_prozentual = gmbh_steuern_gesamt / gmbh_gewinn_vor_steuern
@@ -294,12 +321,15 @@ class Steuersachen():
             # Persönliche Ebene
             werbekostenpauschale = CONFIG['steuern']['werbungskostenpauschale'][steuerjahr]
 
-            if gkv:
-                gf_krankenkassenbeitrag = Steuersachen.calculate_annual_krankenkassenbeitrag_self_employed(gf_gehalt, additional_rate=kv_zusatzbeitrag, year=steuerjahr, krankentagegeld=krankentagegeld, pv_zuschlag=pv_zuschlag)
-            else:
-                gf_krankenkassenbeitrag = 0
+            gesamtes_gf_brutto = gf_gehalt + andere_einkommen
 
-            zve = gf_gehalt - gf_krankenkassenbeitrag - werbekostenpauschale - sonstige_absetzbare_ausgaben
+            if gkv:
+                gf_krankenkassenbeitrag = Steuersachen.calculate_annual_krankenkassenbeitrag_self_employed(gesamtes_gf_brutto, additional_rate=kv_zusatzbeitrag, year=steuerjahr, krankentagegeld=krankentagegeld, pv_zuschlag=pv_zuschlag)
+            else:
+                gf_krankenkassenbeitrag = beitrag_pkv*12
+
+            kv_steuerlich_absetzbar = gf_krankenkassenbeitrag * (kv_steuerlich_absetzbar / 100)
+            zve = gesamtes_gf_brutto - kv_steuerlich_absetzbar - werbekostenpauschale - sonstige_absetzbare_ausgaben
 
             if verheiratet:
                 zve += ehepartner_zve
@@ -322,42 +352,47 @@ class Steuersachen():
             gesamte_abgaben_prozentual = gesamte_abgaben / gesamter_nettoerlös
             pretty_print_gesamte_abgaben_prozentual = round(gesamte_abgaben_prozentual * 100, 2)
 
+            if gkv:
+                st.info("""
+                        Für die Berechnung der Krankengassenbeiträge müssen ggf noch andere Einkünfte sowie die Art der Versicherung des Ehepartners und der Höhe der Beiträge dort berücksichtigt werden. 
+                        Dies geschieht hier nicht. Der Beitrag wird zudem hier zur Vereinfachung zu 100% von dem zvE abgezogen, was auch nicht richtig ist. Für genauere Informationen Fragen Sie Ihren Steuerberater. 
+                        """)
+
             with col1:
                 st.divider()
                 st.markdown(f"""
-                **Ergebnis:**  
-                **Jahresumsatz:** {Steuersachen.format_currency(gmbh_umsatz)}  
-                **Kosten:** -{Steuersachen.format_currency(gmbh_kosten)}  
-                **GF Gehalt:** -{Steuersachen.format_currency(gf_gehalt)}  
-                **Gewinn vor Steuern:** {Steuersachen.format_currency(gmbh_gewinn_vor_steuern)}  
-                **Abgaben (KSt+Soli+GwSt):** -{Steuersachen.format_currency(gmbh_steuern_gesamt)}  
-                **Abgabenlast in Prozent:** {pretty_print_gmbh_abgabenlast_prozentual} %  
-                **Gewinn nach Steuern:** {Steuersachen.format_currency(gmbh_gewinn_nach_steuern)}  
+                Jahresumsatz: **{Steuersachen.format_currency(gmbh_umsatz)}**  
+                Kosten: :red[**-{Steuersachen.format_currency(gmbh_kosten)}**]  
+                GF Gehalt: :red[**-{Steuersachen.format_currency(gf_gehalt)}**]  
+                Gewinn vor Steuern: **{Steuersachen.format_currency(gmbh_gewinn_vor_steuern)}**  
+                Abgaben (KSt+Soli+GwSt): :red[**-{Steuersachen.format_currency(gmbh_steuern_gesamt)}**]  
+                Gewinn nach Steuern: :green[**{Steuersachen.format_currency(gmbh_gewinn_nach_steuern)}**]  
+                Abgabenlast in Prozent: **{pretty_print_gmbh_abgabenlast_prozentual}** %  
                 """)
 
             with col2:
                 st.divider()
                 st.markdown(f"""
-                **Ergebnis:**  
-                **GF Gehalt:** {Steuersachen.format_currency(gf_gehalt)}  
-                **Gezahlte KK Beiträge GF:** {Steuersachen.format_currency(gf_krankenkassenbeitrag)}  
-                **Werbungskostenpauschale:** {Steuersachen.format_currency(werbekostenpauschale)}  
-                **Ehepartner ZvE:** {Steuersachen.format_currency(ehepartner_zve)}  
-                **Sonstige Absetzbare Ausgaben:** -{Steuersachen.format_currency(sonstige_absetzbare_ausgaben)}  
-                **ZvE:** {Steuersachen.format_currency(zve)}  
-                **Gezahlte Steuern:** {Steuersachen.format_currency(ekst)}  
-                **Persönlicher Steuersatz (Durchschnitt):** {pretty_print_persoenlicher_durchschnitts_steuersatz_prozentual} %  
-                **Persönlicher Grenzsteuersatz:** {pretty_print_zve_grenzsteuersatz} %  
-                **Abgaben Absolut:** {Steuersachen.format_currency(persoenliche_abgabenlast)}  
-                **Abgabenlast in Prozent:** {pretty_print_persoenliche_abgabenlast_prozentual} %  
+                GF Gehalt: **{Steuersachen.format_currency(gf_gehalt)}**  
+                Gezahlte KV Beiträge GF: :red[**-{Steuersachen.format_currency(gf_krankenkassenbeitrag)}**]  
+                Werbungskostenpauschale: :red[**-{Steuersachen.format_currency(werbekostenpauschale)}**]  
+                Ehepartner ZvE: **+{Steuersachen.format_currency(ehepartner_zve)}**  
+                Sonstige Absetzbare Ausgaben: :red[**-{Steuersachen.format_currency(sonstige_absetzbare_ausgaben)}**]  
+                ZvE: **{Steuersachen.format_currency(zve)}**  
+                Abzug EkSt+Soli: :red[**-{Steuersachen.format_currency(ekst)}**]  
+                Abzug Ehepartner ZvE: **-{Steuersachen.format_currency(ehepartner_zve)}**  
+                Abgaben Absolut: :red[**{Steuersachen.format_currency(persoenliche_abgabenlast)}**]  
+                Zusammengefasste Abgabenlast in Prozent (inkl. KV): **{pretty_print_persoenliche_abgabenlast_prozentual} %**  
+                Persönlicher Steuersatz (Durchschnitt): **{pretty_print_persoenlicher_durchschnitts_steuersatz_prozentual} %**  
+                Persönlicher Grenzsteuersatz: **{pretty_print_zve_grenzsteuersatz} %**  
                 """)
 
             st.subheader("Zusammenfassung")
 
             st.markdown(f"""
-            **Nettoerlös (ohne Ehepartner wenn zutreffend):** {Steuersachen.format_currency(gesamter_nettoerlös)}  
-            **Abgaben Absolut:** {Steuersachen.format_currency(gesamte_abgaben)}  
-            **Abgabenlast in Prozent:** {pretty_print_gesamte_abgaben_prozentual} %  
+            Nettoerlös (ohne Ehepartner wenn zutreffend): **:green[{Steuersachen.format_currency(gesamter_nettoerlös)}]**  
+            Abgaben Absolut: **{Steuersachen.format_currency(gesamte_abgaben)}**  
+            Abgabenlast in Prozent: **{pretty_print_gesamte_abgaben_prozentual} %**  
             """)
 
         # Dynamischer Fließtext zur Erklärung der Steuerberechnungen
