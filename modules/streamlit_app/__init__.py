@@ -273,7 +273,7 @@ class Steuersachen():
                 krankentagegeld = False
                 pv_zuschlag = False
                 beitrag_pkv = st.slider(
-                    "Beitrag zur PKV (€)",
+                    "Beitrag zur PKV pro Monat (€)",
                     min_value=0, max_value=2000, step=10, value=1000,
                     help=CONFIG["hint"]["beitrag_pkv"]
                 )
@@ -330,7 +330,7 @@ class Steuersachen():
                                                                                                            krankentagegeld=krankentagegeld, 
                                                                                                            pv_zuschlag=pv_zuschlag)
             else:
-                gf_krankenkassenbeitrag = beitrag_pkv*12
+                gf_krankenkassenbeitrag = beitrag_pkv * 12
 
             kv_steuerlich_absetzbar = gf_krankenkassenbeitrag * (kv_steuerlich_absetzbar / 100)
             zve = gesamtes_gf_brutto - kv_steuerlich_absetzbar - werbekostenpauschale - sonstige_absetzbare_ausgaben
@@ -362,6 +362,12 @@ class Steuersachen():
                         Dies geschieht hier nicht. Der Beitrag wird zudem hier zur Vereinfachung zu 100% von dem zvE abgezogen, was auch nicht richtig ist. Für genauere Informationen Fragen Sie Ihren Steuerberater. 
                         """)
 
+            if ehepartner_zve > gf_gehalt:
+                st.warning("""
+                        Der Rechner betrachtet nur das Gehalt des Geschäftsführers und den Gewinn der GmbH. Verdient der Ehepartner mehr, so zahlt in diesem Rechner
+                        der Geschäftsführer einen Teil der EkSt. Die Zahlen sind nun verwirrend, da das Netto des Ehepartners nicht mit in das Gesamtsaldo mit einfließt. 
+                        """)
+
             with col1:
                 st.divider()
                 st.markdown(f"""
@@ -379,7 +385,7 @@ class Steuersachen():
                 st.markdown(f"""
                 GF Gehalt: **{Steuersachen.format_currency(gf_gehalt)}**  
                 Andere Einkommen: **{Steuersachen.format_currency(andere_einkommen)}**  
-                Absetzbare KV Beiträge GF: :red[**-{Steuersachen.format_currency(kv_steuerlich_absetzbar)}**]  
+                Absetzbare Krankenkassen-Beiträge GF: :red[**-{Steuersachen.format_currency(kv_steuerlich_absetzbar)}**]  
                 Werbungskostenpauschale: :red[**-{Steuersachen.format_currency(werbekostenpauschale)}**]  
                 Ehepartner ZvE: **+{Steuersachen.format_currency(ehepartner_zve)}**  
                 Sonstige Absetzbare Ausgaben: :red[**-{Steuersachen.format_currency(sonstige_absetzbare_ausgaben)}**]  
@@ -388,7 +394,7 @@ class Steuersachen():
                 
                 st.markdown(f"""
                 Abzug EkSt+Soli: :red[**-{Steuersachen.format_currency(ekst)}**]  
-                Gezahlte KV Beiträge GF: :red[**-{Steuersachen.format_currency(gf_krankenkassenbeitrag)}**]  
+                Gezahlte Krankenkassen-Beiträge GF: :red[**-{Steuersachen.format_currency(gf_krankenkassenbeitrag)}**]  
                 Abgaben Gesamt: :red[**{Steuersachen.format_currency(persoenliche_abgabenlast)}**]  
                 """)
 

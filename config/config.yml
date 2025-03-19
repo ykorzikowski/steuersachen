@@ -12,7 +12,7 @@ hint:
   verheiratet: "Ob der Steuerpflichtige verheiratet ist (True/False)."
   ehepartner_zve: "Zu versteuerndes Einkommen des Ehepartners, falls verheiratet."
   andere_einkommen: "Andere Einkommen, die hinzugerechnet werden."
-  beitrag_pkv: "Beitrag zur PKV."
+  beitrag_pkv: "Beitrag zur PKV pro Monat."
   pkv_steuerlich_absetzbar: "Zu wie viel % ist der PKV Beitrag absetzbar?"
 
 steuern:
