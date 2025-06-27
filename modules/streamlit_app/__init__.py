@@ -348,13 +348,15 @@ class Steuersachen():
 
             persoenliche_abgabenlast = ekst + gf_krankenkassenbeitrag
             persoenliches_netto = gesamtes_gf_brutto - persoenliche_abgabenlast
-            persoenliche_abgabenlast_prozentual = persoenliche_abgabenlast / zve
+            persoenliche_abgabenlast_prozentual = 1 - persoenliches_netto / gesamtes_gf_brutto
             pretty_print_persoenliche_abgabenlast_prozentual = round(persoenliche_abgabenlast_prozentual * 100, 2)
 
             gesamter_nettoerlös = persoenliches_netto + gmbh_gewinn_nach_steuern
             gesamte_abgaben = gmbh_steuern_gesamt + persoenliche_abgabenlast
-            gesamte_abgaben_prozentual = gesamte_abgaben / gesamter_nettoerlös
+            gesamte_abgaben_prozentual = 1 - gesamter_nettoerlös / gmbh_umsatz
+            gesamte_abgaben_prozentual_ohne_gmbh_kosten = 1 - (gesamter_nettoerlös + gmbh_kosten) / gmbh_umsatz
             pretty_print_gesamte_abgaben_prozentual = round(gesamte_abgaben_prozentual * 100, 2)
+            pretty_print_gesamte_abgaben_ohne_gmbh_kosten_prozentual = round(gesamte_abgaben_prozentual_ohne_gmbh_kosten * 100, 2)
 
             if gkv:
                 st.info("""
@@ -410,7 +412,8 @@ class Steuersachen():
             st.markdown(f"""
             Nettoerlös (ohne Ehepartner wenn zutreffend): **:green[{Steuersachen.format_currency(gesamter_nettoerlös)}]**  
             Abgaben Absolut: **{Steuersachen.format_currency(gesamte_abgaben)}**  
-            Abgabenlast in Prozent: **{pretty_print_gesamte_abgaben_prozentual} %**  
+            Abgabenlast in Prozent (mit GmbH Kosten): **{pretty_print_gesamte_abgaben_prozentual} %**  
+            Abgabenlast in Prozent (ohne GmbH Kosten): **{pretty_print_gesamte_abgaben_ohne_gmbh_kosten_prozentual} %**  
             """)
 
             bt_col1, bt_col2 = st.columns(2)
