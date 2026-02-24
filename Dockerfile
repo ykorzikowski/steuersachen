@@ -1,6 +1,10 @@
 FROM harbor.swokiz.dev/hub-proxy/library/python:3.12-slim
 
-COPY --chown=1000:1000 .streamlit/ requirements.txt modules/ config/ run.py /app
+COPY --chown=1000:1000 requirements.txt /app/requirements.txt
+COPY --chown=1000:1000 run.py /app/run.py
+COPY --chown=1000:1000 .streamlit /app/.streamlit
+COPY --chown=1000:1000 modules /app/modules
+COPY --chown=1000:1000 config /app/config
 
 WORKDIR /app
 ENV PYTHONPATH=/app
