@@ -7,8 +7,6 @@ COPY --chown=1000:1000 modules /app/modules
 COPY --chown=1000:1000 config /app/config
 
 WORKDIR /app
-ENV PYTHONPATH=/app
-ENV STREAMLIT_CONFIG_DIR=/app/.streamlit
 
 RUN useradd -m -u 1000 app \
  && chown -R 1000:1000 /app \
