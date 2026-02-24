@@ -1,6 +1,6 @@
 FROM harbor.swokiz.dev/hub-proxy/library/python:3.12-slim
 
-COPY --chown=1000:1000 . /app
+COPY --chown=1000:1000 requirements.txt modules/ config/ run.py /app
 
 WORKDIR /app
 
