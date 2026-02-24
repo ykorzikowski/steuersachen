@@ -14,6 +14,8 @@ RUN useradd -m -u 1000 app \
  && chown -R 1000:1000 /app \
  && python3 -m pip install -r /app/requirements.txt
 
+USER 1000:1000
+
 ENTRYPOINT ["python3", "-m", "streamlit", "run", "--server.address", "0.0.0.0", "run.py"]
 
 EXPOSE 8501/tcp
