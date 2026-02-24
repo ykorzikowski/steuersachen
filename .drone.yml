@@ -6,20 +6,72 @@ name: build
 
 steps:
 
-  - name: kaninko-build-prod
-    image: harbor.swokiz.dev/hub-proxy/plugins/kaniko
-    depends_on: [clone]
+  - name: quality-gates
+    image: harbor.swokiz.dev/hub-proxy/library/python:3.12-slim
+    commands:
+      - python3 -m pip install -r requirements.txt -r requirements-dev.txt
+      - python3 -m ruff check .
+      - python3 -m mypy
+      - python3 -m pytest -m "not e2e"
+      - python3 -m pytest -m e2e
+      - python3 -m pytest --cov=. --cov-report=xml:coverage.xml
+      - test -f coverage.xml
+
+  - name: buildah-build-prod-branch
+    image: harbor.swokiz.dev/proxy.quay.io/buildah/stable:v1.42
+    privileged: true
+    depends_on: [quality-gates]
     environment:
-      PLUGIN_CONFIG:
+      REGISTRY_AUTH_JSON:
         from_secret: image-swokiz-dev-json
-    settings:
-      repo: harbor.swokiz.dev/swokiz/steuersachen
-      registry: harbor.swokiz.dev
-      dockerfile: Dockerfile
+      IMAGE_REPOSITORY: harbor.swokiz.dev/swokiz
+      IMAGE_NAME: steuersachen
+    commands:
+      - mkdir -p /tmp/registry-auth
+      - printf '%s' "$REGISTRY_AUTH_JSON" > /tmp/registry-auth/config.json
+      - export REGISTRY_AUTH_FILE=/tmp/registry-auth/config.json
+      - export IMAGE_REF="$(echo "$IMAGE_REPOSITORY")/$(echo "$IMAGE_NAME"):$(echo "$DRONE_BRANCH" | tr '/' '-')"
+      - echo "$IMAGE_REF"
+      - buildah bud --format docker -f Dockerfile -t "$IMAGE_REF" .
+      - buildah push "$IMAGE_REF"
+    when:
+      event:
+        exclude:
+          - tag
+          - pull_request
+
+  - name: buildah-build-prod-tag
+    image: harbor.swokiz.dev/proxy.quay.io/buildah/stable:v1.42
+    privileged: true
+    depends_on: [quality-gates]
+    environment:
+      REGISTRY_AUTH_JSON:
+        from_secret: image-swokiz-dev-json
+      IMAGE_REPOSITORY: harbor.swokiz.dev/swokiz
+      IMAGE_NAME: steuersachen
+    commands:
+      - mkdir -p /tmp/registry-auth
+      - printf '%s' "$REGISTRY_AUTH_JSON" > /tmp/registry-auth/config.json
+      - export REGISTRY_AUTH_FILE=/tmp/registry-auth/config.json
+      - export IMAGE_REF="$(echo "$IMAGE_REPOSITORY")/$(echo "$IMAGE_NAME"):$(echo "$DRONE_BRANCH" | tr '/' '-')"
+      - echo "$IMAGE_REF"
+      - buildah bud --format docker -f Dockerfile -t "$IMAGE_REF" .
+      - buildah push "$IMAGE_REF"
+    when:
+      event:
+        include:
+          - tag
 
   - name: deployment.
-    depends_on: [kaninko-build-prod]
+    depends_on: [buildah-build-prod-branch]
     image: harbor.swokiz.dev/hub-proxy/plugins/downstream
+    when:
+      branch:
+        include:
+          - main
+      event:
+        include:
+          - push
     settings:
       server: https://drone.swokiz.dev
       token:
@@ -35,22 +87,16 @@ steps:
   - name: code-analysis
     image: harbor.swokiz.dev/hub-proxy/plugins/sonarqube-scanner:v2.4.1
     failure: ignore
+    depends_on: [quality-gates]
     settings:
       sonar_host: "https://sonar.swokiz.dev"
       usingProperties: "true"
       workspace: "/drone"
       exclusions: "**/*.java"
-      sonar_key: "wealthbuddy"
-      sonar_name: "wealthbuddy"
+      sonar_key: "steuersachen"
+      sonar_name: "steuersachen"
       sonar_token:
         from_secret: sonar-token
 
 image_pull_secrets:
   - image-swokiz-dev-json
-
-trigger:
-  ref:
-    exclude:
-      - refs/tags/*
-  branch:
-    - main
