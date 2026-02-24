@@ -1,8 +1,40 @@
-__pycache__/
+# OS / editor
 .DS_Store
-/venv
+.idea/
+.vscode/
+
+# Python bytecode / caches
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Local environment files
 .env
-*.pyc
-**/**/__pycache__
+.env.*
+
+# Tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Test / CI artifacts
 .test-artifacts/
 coverage.xml
+.coverage
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Runtime logs
+*.log

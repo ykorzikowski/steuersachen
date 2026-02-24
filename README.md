@@ -17,11 +17,12 @@ pip3 install -r requirements-dev.txt
 Alle Befehle sind im Projekt-Root auszuführen.
 
 ```
-ruff check modules/gf_gehalt modules/utils/helper tests
-mypy
-pytest -m "not e2e"
-pytest -m e2e
-pytest --cov=modules/gf_gehalt --cov=modules/utils/helper --cov-report=xml:coverage.xml
+python3 -m ruff check .
+python3 -m mypy
+python3 -m pytest -m "not e2e"
+python3 -m pytest -m e2e
+python3 -m pytest --cov=. --cov-report=xml:coverage.xml
+test -f coverage.xml
 ```
 
 Details und Hinweise: [docs/testing.md](docs/testing.md)
